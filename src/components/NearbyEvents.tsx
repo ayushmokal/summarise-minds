@@ -18,13 +18,12 @@ interface Event {
   date: string;
 }
 
-// Predefined locations for manual selection
 const predefinedLocations = [
+  { name: "Mumbai", lat: 19.0760, lon: 72.8777 },
   { name: "New York", lat: 40.7128, lon: -74.0060 },
   { name: "London", lat: 51.5074, lon: -0.1278 },
   { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
   { name: "Sydney", lat: -33.8688, lon: 151.2093 },
-  { name: "Mumbai", lat: 19.0760, lon: 72.8777 },
 ];
 
 export const NearbyEvents = () => {
@@ -143,14 +142,14 @@ export const NearbyEvents = () => {
           <Button
             onClick={toggleLocationMode}
             variant="outline"
-            className="text-sm"
+            className="text-sm bg-white hover:bg-gray-50"
           >
             {useCurrentLocation ? "Use Manual Location" : "Use Current Location"}
           </Button>
           <Button
             onClick={fetchNearbyEvents}
             disabled={loading || !location}
-            className="bg-blue-500 hover:bg-blue-600"
+            className="bg-blue-500 hover:bg-blue-600 text-white"
           >
             {loading ? (
               <>
@@ -167,7 +166,7 @@ export const NearbyEvents = () => {
       {!useCurrentLocation && (
         <div className="mb-4">
           <Select value={selectedLocation} onValueChange={handleLocationSelect}>
-            <SelectTrigger className="w-[200px]">
+            <SelectTrigger className="w-[200px] bg-white">
               <SelectValue placeholder="Select a location" />
             </SelectTrigger>
             <SelectContent>
@@ -194,7 +193,7 @@ export const NearbyEvents = () => {
         {events.map((event, index) => (
           <div
             key={index}
-            className="p-4 border rounded-lg hover:shadow-md transition-shadow animate-fadeIn"
+            className="p-4 border rounded-lg hover:shadow-md transition-shadow animate-fadeIn bg-white"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <h3 className="font-semibold text-lg mb-2">{event.title}</h3>
@@ -207,7 +206,7 @@ export const NearbyEvents = () => {
         ))}
 
         {!events.length && !loading && (
-          <p className="text-gray-500 italic text-center">
+          <p className="text-center text-gray-500 italic py-8">
             No nearby events found. Try refreshing or check back later.
           </p>
         )}
