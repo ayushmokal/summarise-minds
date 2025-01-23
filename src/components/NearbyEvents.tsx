@@ -71,6 +71,7 @@ export const NearbyEvents = () => {
 
     setLoading(true);
     try {
+      const currentYear = new Date().getFullYear();
       const response = await fetch(
         "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyClIsIwka4gzTqUttDwb1R2egOsJboKqKs",
         {
@@ -81,7 +82,7 @@ export const NearbyEvents = () => {
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Generate 3 upcoming events near ${selectedLocation}. Return ONLY a JSON array with objects containing title, description, location, date, time, venue, capacity, ticketPrice, organizer, category, and additionalInfo fields. Make the events realistic, detailed and relevant to the location. The response should be ONLY the JSON array, nothing else.`
+                text: `Generate 3 upcoming events near ${selectedLocation} for ${currentYear} and beyond. Return ONLY a JSON array with objects containing title, description, location, date (must be in ${currentYear} or later), time, venue, capacity, ticketPrice, organizer, category, and additionalInfo fields. Make the events realistic, detailed, and relevant to the location. Events must be upcoming and not in the past. The response should be ONLY the JSON array, nothing else.`
               }]
             }]
           }),
