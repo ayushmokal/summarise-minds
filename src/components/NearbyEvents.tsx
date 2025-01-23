@@ -46,6 +46,20 @@ export const NearbyEvents = () => {
     }
   };
 
+  const extractJSONFromResponse = (text: string): Event[] => {
+    try {
+      // Remove any markdown formatting and extract just the JSON array
+      const jsonMatch = text.match(/\[[\s\S]*\]/);
+      if (!jsonMatch) throw new Error("No JSON array found in response");
+      
+      const jsonStr = jsonMatch[0];
+      return JSON.parse(jsonStr);
+    } catch (error) {
+      console.error("Error parsing JSON:", error);
+      throw new Error("Failed to parse events data");
+    }
+  };
+
   const fetchNearbyEvents = async () => {
     if (!location) return;
 
@@ -61,7 +75,7 @@ export const NearbyEvents = () => {
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Generate 3 upcoming events near ${selectedLocation}. Format the response as a JSON array with objects containing title, description, location, and date fields. Make the events realistic and relevant to the location.`
+                text: `Generate 3 upcoming events near ${selectedLocation}. Return ONLY a JSON array with objects containing title, description, location, and date fields. Make the events realistic and relevant to the location. The response should be ONLY the JSON array, nothing else.`
               }]
             }]
           }),
@@ -70,7 +84,7 @@ export const NearbyEvents = () => {
 
       const data = await response.json();
       if (data.candidates && data.candidates[0].content.parts[0].text) {
-        const eventsData = JSON.parse(data.candidates[0].content.parts[0].text);
+        const eventsData = extractJSONFromResponse(data.candidates[0].content.parts[0].text);
         setEvents(eventsData);
       }
     } catch (error) {
