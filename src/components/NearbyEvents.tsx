@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, MapPin } from "lucide-react";
+import { Loader2, MapPin, Calendar, Clock, Users, Ticket, Info } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -16,6 +16,13 @@ interface Event {
   description: string;
   location: string;
   date: string;
+  time?: string;
+  venue?: string;
+  capacity?: string;
+  ticketPrice?: string;
+  organizer?: string;
+  category?: string;
+  additionalInfo?: string;
 }
 
 const predefinedLocations = [
@@ -48,7 +55,6 @@ export const NearbyEvents = () => {
 
   const extractJSONFromResponse = (text: string): Event[] => {
     try {
-      // Remove any markdown formatting and extract just the JSON array
       const jsonMatch = text.match(/\[[\s\S]*\]/);
       if (!jsonMatch) throw new Error("No JSON array found in response");
       
@@ -75,7 +81,7 @@ export const NearbyEvents = () => {
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Generate 3 upcoming events near ${selectedLocation}. Return ONLY a JSON array with objects containing title, description, location, and date fields. Make the events realistic and relevant to the location. The response should be ONLY the JSON array, nothing else.`
+                text: `Generate 3 upcoming events near ${selectedLocation}. Return ONLY a JSON array with objects containing title, description, location, date, time, venue, capacity, ticketPrice, organizer, category, and additionalInfo fields. Make the events realistic, detailed and relevant to the location. The response should be ONLY the JSON array, nothing else.`
               }]
             }]
           }),
@@ -125,7 +131,7 @@ export const NearbyEvents = () => {
         </Button>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-6">
         <Select value={selectedLocation} onValueChange={handleLocationSelect}>
           <SelectTrigger className="w-[200px] bg-white">
             <SelectValue placeholder="Select a location" />
@@ -147,18 +153,72 @@ export const NearbyEvents = () => {
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-6">
         {events.map((event, index) => (
           <div
             key={index}
-            className="p-4 border rounded-lg hover:shadow-md transition-shadow animate-fadeIn bg-white"
+            className="p-6 border rounded-lg hover:shadow-md transition-shadow animate-fadeIn bg-white"
             style={{ animationDelay: `${index * 100}ms` }}
           >
-            <h3 className="font-semibold text-lg mb-2">{event.title}</h3>
-            <p className="text-gray-600 mb-2">{event.description}</p>
-            <div className="flex justify-between text-sm text-gray-500">
-              <span>{event.location}</span>
-              <span>{event.date}</span>
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="font-semibold text-xl text-blue-600">{event.title}</h3>
+              {event.category && (
+                <span className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full text-sm">
+                  {event.category}
+                </span>
+              )}
+            </div>
+            
+            <p className="text-gray-600 mb-4">{event.description}</p>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div className="flex items-center gap-2 text-gray-600">
+                <MapPin className="h-4 w-4" />
+                <span>{event.venue || event.location}</span>
+              </div>
+              
+              <div className="flex items-center gap-2 text-gray-600">
+                <Calendar className="h-4 w-4" />
+                <span>{event.date}</span>
+              </div>
+              
+              {event.time && (
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Clock className="h-4 w-4" />
+                  <span>{event.time}</span>
+                </div>
+              )}
+              
+              {event.capacity && (
+                <div className="flex items-center gap-2 text-gray-600">
+                  <Users className="h-4 w-4" />
+                  <span>Capacity: {event.capacity}</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="border-t pt-4">
+              {event.ticketPrice && (
+                <div className="flex items-center gap-2 text-gray-600 mb-2">
+                  <Ticket className="h-4 w-4" />
+                  <span>Ticket Price: {event.ticketPrice}</span>
+                </div>
+              )}
+              
+              {event.organizer && (
+                <div className="text-sm text-gray-500">
+                  Organized by: {event.organizer}
+                </div>
+              )}
+              
+              {event.additionalInfo && (
+                <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Info className="h-4 w-4" />
+                    <span className="text-sm">{event.additionalInfo}</span>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         ))}
