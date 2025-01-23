@@ -55,11 +55,10 @@ export const NewsPreferences = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent", {
+      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyClIsIwka4gzTqUttDwb1R2egOsJboKqKs", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer AIzaSyClIsIwka4gzTqUttDwb1R2egOsJboKqKs`,
         },
         body: JSON.stringify({
           contents: [{
@@ -77,6 +76,7 @@ export const NewsPreferences = () => {
         throw new Error("Failed to generate summary");
       }
     } catch (error) {
+      console.error("API Error:", error);
       toast({
         title: "Error",
         description: "Failed to generate news summary. Please try again.",
