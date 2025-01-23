@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import { NearbyEvents } from "./NearbyEvents";
 import {
   Select,
   SelectContent,
@@ -173,6 +174,10 @@ export const NewsPreferences = () => {
               )}
             </div>
           </Card>
+
+          <div className="md:col-span-2">
+            <NearbyEvents />
+          </div>
         </div>
       </div>
     </div>
