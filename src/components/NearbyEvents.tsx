@@ -20,10 +20,15 @@ interface Event {
 
 const predefinedLocations = [
   { name: "Mumbai", lat: 19.0760, lon: 72.8777 },
+  { name: "Delhi", lat: 28.6139, lon: 77.2090 },
+  { name: "Bangalore", lat: 12.9716, lon: 77.5946 },
   { name: "New York", lat: 40.7128, lon: -74.0060 },
   { name: "London", lat: 51.5074, lon: -0.1278 },
   { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
   { name: "Sydney", lat: -33.8688, lon: 151.2093 },
+  { name: "Dubai", lat: 25.2048, lon: 55.2708 },
+  { name: "Singapore", lat: 1.3521, lon: 103.8198 },
+  { name: "Paris", lat: 48.8566, lon: 2.3522 }
 ];
 
 export const NearbyEvents = () => {
@@ -31,53 +36,13 @@ export const NearbyEvents = () => {
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
-  const [useCurrentLocation, setUseCurrentLocation] = useState(true);
   const { toast } = useToast();
-
-  const getLocation = () => {
-    if (!useCurrentLocation) return;
-    
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setLocation({
-            lat: position.coords.latitude,
-            lon: position.coords.longitude,
-          });
-        },
-        (error) => {
-          toast({
-            title: "Location Error",
-            description: "Unable to get your location. Please enable location services or select a location manually.",
-            variant: "destructive",
-          });
-          setUseCurrentLocation(false);
-        }
-      );
-    } else {
-      toast({
-        title: "Geolocation not supported",
-        description: "Your browser doesn't support location services. Please select a location manually.",
-        variant: "destructive",
-      });
-      setUseCurrentLocation(false);
-    }
-  };
 
   const handleLocationSelect = (locationName: string) => {
     setSelectedLocation(locationName);
-    setUseCurrentLocation(false);
     const selected = predefinedLocations.find(loc => loc.name === locationName);
     if (selected) {
       setLocation({ lat: selected.lat, lon: selected.lon });
-    }
-  };
-
-  const toggleLocationMode = () => {
-    setUseCurrentLocation(!useCurrentLocation);
-    if (!useCurrentLocation) {
-      setSelectedLocation("");
-      getLocation();
     }
   };
 
@@ -96,7 +61,7 @@ export const NearbyEvents = () => {
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Generate 3 upcoming events near latitude ${location.lat} and longitude ${location.lon}. Format the response as a JSON array with objects containing title, description, location, and date fields. Make the events realistic and relevant to the location.`
+                text: `Generate 3 upcoming events near ${selectedLocation}. Format the response as a JSON array with objects containing title, description, location, and date fields. Make the events realistic and relevant to the location.`
               }]
             }]
           }),
@@ -121,14 +86,6 @@ export const NearbyEvents = () => {
   };
 
   useEffect(() => {
-    if (useCurrentLocation) {
-      getLocation();
-      const intervalId = setInterval(getLocation, 300000); // Update location every 5 minutes
-      return () => clearInterval(intervalId);
-    }
-  }, [useCurrentLocation]);
-
-  useEffect(() => {
     if (location) {
       fetchNearbyEvents();
     }
@@ -137,55 +94,42 @@ export const NearbyEvents = () => {
   return (
     <Card className="p-6 shadow-lg">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Nearby Events</h2>
-        <div className="flex items-center gap-4">
-          <Button
-            onClick={toggleLocationMode}
-            variant="outline"
-            className="text-sm bg-white hover:bg-gray-50"
-          >
-            {useCurrentLocation ? "Use Manual Location" : "Use Current Location"}
-          </Button>
-          <Button
-            onClick={fetchNearbyEvents}
-            disabled={loading || !location}
-            className="bg-blue-500 hover:bg-blue-600 text-white"
-          >
-            {loading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Updating...
-              </>
-            ) : (
-              "Refresh Events"
-            )}
-          </Button>
-        </div>
+        <h2 className="text-2xl font-semibold">Events Near You</h2>
+        <Button
+          onClick={fetchNearbyEvents}
+          disabled={loading || !location}
+          className="bg-blue-500 hover:bg-blue-600 text-white"
+        >
+          {loading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Updating...
+            </>
+          ) : (
+            "Refresh Events"
+          )}
+        </Button>
       </div>
 
-      {!useCurrentLocation && (
-        <div className="mb-4">
-          <Select value={selectedLocation} onValueChange={handleLocationSelect}>
-            <SelectTrigger className="w-[200px] bg-white">
-              <SelectValue placeholder="Select a location" />
-            </SelectTrigger>
-            <SelectContent>
-              {predefinedLocations.map((loc) => (
-                <SelectItem key={loc.name} value={loc.name}>
-                  {loc.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
+      <div className="mb-4">
+        <Select value={selectedLocation} onValueChange={handleLocationSelect}>
+          <SelectTrigger className="w-[200px] bg-white">
+            <SelectValue placeholder="Select a location" />
+          </SelectTrigger>
+          <SelectContent>
+            {predefinedLocations.map((loc) => (
+              <SelectItem key={loc.name} value={loc.name}>
+                {loc.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
 
       {location && (
         <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
           <MapPin className="h-4 w-4" />
-          <span>
-            Location: {location.lat.toFixed(2)}°, {location.lon.toFixed(2)}°
-          </span>
+          <span>Selected Location: {selectedLocation}</span>
         </div>
       )}
 
@@ -207,7 +151,7 @@ export const NearbyEvents = () => {
 
         {!events.length && !loading && (
           <p className="text-center text-gray-500 italic py-8">
-            No nearby events found. Try refreshing or check back later.
+            No events found. Please select a location and try again.
           </p>
         )}
       </div>
