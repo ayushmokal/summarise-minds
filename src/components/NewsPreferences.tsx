@@ -13,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TrendingTopics } from "./TrendingTopics";
 
 const categories = [
   "Technology",
@@ -330,6 +331,11 @@ export const NewsPreferences = () => {
             <NearbyEvents />
           </div>
         </div>
+
+        <TrendingTopics 
+          selectedCategories={[...preferences.filter(Boolean), ...customPreferences]} 
+          location={location}
+        />
       </div>
     </div>
   );
