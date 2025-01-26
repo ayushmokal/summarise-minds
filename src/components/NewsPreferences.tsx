@@ -130,15 +130,6 @@ export const NewsPreferences = () => {
   const handleSubmit = async () => {
     const allPreferences = [...preferences.filter(Boolean), ...customPreferences];
     
-    if (allPreferences.length < 3 || !location) {
-      toast({
-        title: "Incomplete preferences",
-        description: "Please select at least 3 preferences (including custom ones) and a location.",
-        variant: "destructive",
-      });
-      return;
-    }
-
     setLoading(true);
     setSentiment(null);
     try {
@@ -150,7 +141,7 @@ export const NewsPreferences = () => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `Generate a concise news summary for the following categories: ${allPreferences.join(", ")} for ${location}. Focus on the most important recent developments.`
+              text: `Generate a concise news summary for the following categories: ${allPreferences.join(", ")} ${selectedLocation ? `for ${selectedLocation}` : ''}. Focus on the most important recent developments.`
             }]
           }]
         }),
