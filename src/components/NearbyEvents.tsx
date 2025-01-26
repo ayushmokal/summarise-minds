@@ -114,7 +114,7 @@ export const NearbyEvents = () => {
         console.error("API Error:", errorData);
         
         if (retry < MAX_RETRIES) {
-          await delay(1000 * (retry + 1)); // Exponential backoff
+          await delay(1000 * (retry + 1));
           setRetryCount(retry + 1);
           return fetchNearbyEvents(retry + 1);
         }
@@ -126,7 +126,7 @@ export const NearbyEvents = () => {
       if (data.candidates && data.candidates[0].content.parts[0].text) {
         const eventsData = extractJSONFromResponse(data.candidates[0].content.parts[0].text);
         setEvents(eventsData);
-        setRetryCount(0); // Reset retry count on success
+        setRetryCount(0);
       } else {
         throw new Error("Invalid response format from API");
       }
@@ -157,7 +157,7 @@ export const NearbyEvents = () => {
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold">Events Near You</h2>
         <Button
-          onClick={fetchNearbyEvents}
+          onClick={() => fetchNearbyEvents()} // Fixed: Wrapped in an arrow function
           disabled={loading || !location}
           className="bg-blue-500 hover:bg-blue-600 text-white"
         >
