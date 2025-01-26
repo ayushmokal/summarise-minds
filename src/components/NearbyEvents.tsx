@@ -153,12 +153,13 @@ export const NearbyEvents = () => {
   }, [location]);
 
   return (
-    <Card className="p-6 bg-white shadow-lg">
+    <Card className="p-6 shadow-lg">
       <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-semibold">Events Near You</h2>
         <Button
-          onClick={() => fetchNearbyEvents()}
+          onClick={() => fetchNearbyEvents()} // Fixed: Wrapped in an arrow function
           disabled={loading || !location}
-          className="bg-blue-500 hover:bg-blue-600 text-white ml-auto"
+          className="bg-blue-500 hover:bg-blue-600 text-white"
         >
           {loading ? (
             <>
