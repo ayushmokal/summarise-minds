@@ -43,9 +43,12 @@ export const NearbyEvents = ({ coordinates }: { coordinates: { lat: number; lon:
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const [retryCount, setRetryCount] = useState(0);
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const MAX_RETRIES = 3;
 
   const handleLocationSelect = (locationName: string) => {
+    setSelectedLocation(locationName);
     const selected = predefinedLocations.find(loc => loc.name === locationName);
     if (selected) {
       setLocation({ lat: selected.lat, lon: selected.lon });
