@@ -331,14 +331,26 @@ export const NewsPreferences = () => {
               </div>
             )}
             <div className="prose prose-sm max-w-none">
-              {summary ? (
-                summary.split("\n\n").map((paragraph, index) => (
-                  <p key={index} className="text-gray-600 mb-4">
-                    {paragraph}
-                  </p>
-                ))
+              {loading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                  <span className="ml-3 text-gray-600">Generating summary...</span>
+                </div>
+              ) : summary ? (
+                <div className="space-y-4">
+                  {summary.split("\n\n").map((paragraph, index) => (
+                    <div 
+                      key={index} 
+                      className="p-4 rounded-lg bg-gray-50 border border-gray-100 animate-in"
+                    >
+                      <p className="text-gray-700 leading-relaxed">
+                        {paragraph}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               ) : (
-                <p className="text-gray-500 italic">
+                <p className="text-gray-500 italic text-center py-8">
                   Select your preferences and generate a summary to see the results here.
                 </p>
               )}
