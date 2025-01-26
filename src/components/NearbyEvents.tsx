@@ -3,13 +3,6 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, MapPin, Calendar, Clock, Users, Ticket, Info } from "lucide-react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface Event {
   title: string;
@@ -25,35 +18,12 @@ interface Event {
   additionalInfo?: string;
 }
 
-const predefinedLocations = [
-  { name: "Mumbai", lat: 19.0760, lon: 72.8777 },
-  { name: "Delhi", lat: 28.6139, lon: 77.2090 },
-  { name: "Bangalore", lat: 12.9716, lon: 77.5946 },
-  { name: "New York", lat: 40.7128, lon: -74.0060 },
-  { name: "London", lat: 51.5074, lon: -0.1278 },
-  { name: "Tokyo", lat: 35.6762, lon: 139.6503 },
-  { name: "Sydney", lat: -33.8688, lon: 151.2093 },
-  { name: "Dubai", lat: 25.2048, lon: 55.2708 },
-  { name: "Singapore", lat: 1.3521, lon: 103.8198 },
-  { name: "Paris", lat: 48.8566, lon: 2.3522 }
-];
-
 export const NearbyEvents = ({ coordinates }: { coordinates: { lat: number; lon: number } | null }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
   const [retryCount, setRetryCount] = useState(0);
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const MAX_RETRIES = 3;
-
-  const handleLocationSelect = (locationName: string) => {
-    setSelectedLocation(locationName);
-    const selected = predefinedLocations.find(loc => loc.name === locationName);
-    if (selected) {
-      setLocation({ lat: selected.lat, lon: selected.lon });
-    }
-  };
 
   const extractJSONFromResponse = (text: string): Event[] => {
     try {
@@ -172,29 +142,10 @@ export const NearbyEvents = ({ coordinates }: { coordinates: { lat: number; lon:
         </Button>
       </div>
 
-      <div className="mb-6">
-        <Select value={selectedLocation} onValueChange={handleLocationSelect}>
-          <SelectTrigger className="w-[200px] bg-white border border-gray-200">
-            <SelectValue placeholder="Select a location" />
-          </SelectTrigger>
-          <SelectContent className="bg-white border border-gray-200 shadow-lg">
-            {predefinedLocations.map((loc) => (
-              <SelectItem 
-                key={loc.name} 
-                value={loc.name}
-                className="hover:bg-gray-100"
-              >
-                {loc.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
       {coordinates && (
         <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
           <MapPin className="h-4 w-4" />
-          <span>Selected Location: {selectedLocation}</span>
+          <span>Selected coordinates: {coordinates.lat.toFixed(4)}, {coordinates.lon.toFixed(4)}</span>
         </div>
       )}
 
