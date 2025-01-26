@@ -153,13 +153,12 @@ export const NearbyEvents = () => {
   }, [location]);
 
   return (
-    <Card className="p-6 shadow-lg bg-white">
+    <Card className="p-6 shadow-lg bg-white mx-4">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold">Events Near You</h2>
         <Button
           onClick={() => fetchNearbyEvents()}
           disabled={loading || !location}
-          className="bg-blue-500 hover:bg-blue-600 text-white"
+          className="bg-[#1A1F2C] hover:bg-[#403E43] text-white w-full"
         >
           {loading ? (
             <>
@@ -167,14 +166,14 @@ export const NearbyEvents = () => {
               Updating...
             </>
           ) : (
-            "Refresh Events"
+            "Find Events"
           )}
         </Button>
       </div>
 
       <div className="mb-6">
         <Select value={selectedLocation} onValueChange={handleLocationSelect}>
-          <SelectTrigger className="w-[200px] bg-white border border-gray-200">
+          <SelectTrigger className="w-full bg-white border border-gray-200">
             <SelectValue placeholder="Select a location" />
           </SelectTrigger>
           <SelectContent className="bg-white border border-gray-200 shadow-lg">
