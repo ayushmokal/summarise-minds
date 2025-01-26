@@ -153,11 +153,11 @@ export const NearbyEvents = () => {
   }, [location]);
 
   return (
-    <Card className="p-6 shadow-lg">
+    <Card className="p-6 shadow-lg bg-white">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold">Events Near You</h2>
         <Button
-          onClick={() => fetchNearbyEvents()} // Fixed: Wrapped in an arrow function
+          onClick={() => fetchNearbyEvents()}
           disabled={loading || !location}
           className="bg-blue-500 hover:bg-blue-600 text-white"
         >
@@ -174,12 +174,16 @@ export const NearbyEvents = () => {
 
       <div className="mb-6">
         <Select value={selectedLocation} onValueChange={handleLocationSelect}>
-          <SelectTrigger className="w-[200px] bg-white">
+          <SelectTrigger className="w-[200px] bg-white border border-gray-200">
             <SelectValue placeholder="Select a location" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white border border-gray-200 shadow-lg">
             {predefinedLocations.map((loc) => (
-              <SelectItem key={loc.name} value={loc.name}>
+              <SelectItem 
+                key={loc.name} 
+                value={loc.name}
+                className="hover:bg-gray-100"
+              >
                 {loc.name}
               </SelectItem>
             ))}
@@ -198,7 +202,7 @@ export const NearbyEvents = () => {
         {events.map((event, index) => (
           <div
             key={index}
-            className="p-6 border rounded-lg hover:shadow-md transition-shadow animate-fadeIn bg-white"
+            className="p-6 border rounded-lg hover:shadow-md transition-shadow bg-white"
             style={{ animationDelay: `${index * 100}ms` }}
           >
             <div className="flex justify-between items-start mb-4">
