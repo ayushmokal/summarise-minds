@@ -85,37 +85,20 @@ export const TrendingTopics = ({ selectedCategories, location }: {
   };
 
   return (
-    <Card className="p-6 shadow-lg bg-white mt-8">
-      <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-blue-500" />
-          <h2 className="text-2xl font-semibold">Trending Topics</h2>
-        </div>
-        <Button
-          variant={notificationsEnabled ? "default" : "outline"}
-          onClick={toggleNotifications}
-          className="flex items-center gap-2"
-        >
-          <Bell className="h-4 w-4" />
-          {notificationsEnabled ? "Notifications On" : "Enable Alerts"}
-        </Button>
-      </div>
-      
-      <div className="space-y-4">
-        {trendingTopics.map((topic, index) => (
-          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              <Badge variant="secondary" className="capitalize">
-                {topic.category}
-              </Badge>
-              <span className="font-medium">{topic.topic}</span>
-            </div>
-            <span className="text-sm text-gray-500">
-              {new Date(topic.timestamp).toLocaleTimeString()}
-            </span>
+    <div className="space-y-4">
+      {trendingTopics.map((topic, index) => (
+        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary" className="capitalize">
+              {topic.category}
+            </Badge>
+            <span className="font-medium">{topic.topic}</span>
           </div>
-        ))}
-      </div>
-    </Card>
+          <span className="text-sm text-gray-500">
+            {new Date(topic.timestamp).toLocaleTimeString()}
+          </span>
+        </div>
+      ))}
+    </div>
   );
 };
