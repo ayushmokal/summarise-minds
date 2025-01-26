@@ -8,6 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import Header from "@/components/Header"
+import Footer from "@/components/Footer"
 
 const locations = [
   { id: "us", name: "USA", lat: 37.0902, lon: -95.7129 },
@@ -26,35 +28,39 @@ const Location = () => {
   };
 
   return (
-    <div className="min-h-screen bg-transparent p-8 flex items-center justify-center">
-      <Card className="w-full max-w-md p-8 bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
-        <div className="flex items-center gap-3 mb-6">
-          <MapPin className="h-6 w-6 text-blue-500" />
-          <h1 className="text-2xl font-semibold">Select Your Location</h1>
-        </div>
-        
-        <Select onValueChange={handleLocationSelect}>
-          <SelectTrigger className="w-full bg-white border-gray-200 hover:border-blue-300 transition-colors">
-            <SelectValue placeholder="Choose your location" />
-          </SelectTrigger>
-          <SelectContent className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
-            {locations.map((location) => (
-              <SelectItem 
-                key={location.id} 
-                value={location.id}
-                className="hover:bg-blue-50 transition-colors"
-              >
-                {location.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+    <>
+      <Header />
+      <div className="min-h-screen bg-transparent p-8 flex items-center justify-center">
+        <Card className="w-full max-w-md p-8 bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
+          <div className="flex items-center gap-3 mb-6">
+            <MapPin className="h-6 w-6 text-blue-500" />
+            <h1 className="text-2xl font-semibold">Select Your Location</h1>
+          </div>
+          
+          <Select onValueChange={handleLocationSelect}>
+            <SelectTrigger className="w-full bg-white border-gray-200 hover:border-blue-300 transition-colors">
+              <SelectValue placeholder="Choose your location" />
+            </SelectTrigger>
+            <SelectContent className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
+              {locations.map((location) => (
+                <SelectItem 
+                  key={location.id} 
+                  value={location.id}
+                  className="hover:bg-blue-50 transition-colors"
+                >
+                  {location.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-        <p className="mt-4 text-sm text-gray-600">
-          Your location helps us provide relevant news and updates.
-        </p>
-      </Card>
-    </div>
+          <p className="mt-4 text-sm text-gray-600">
+            Your location helps us provide relevant news and updates.
+          </p>
+        </Card>
+      </div>
+      <Footer />
+    </>
   )
 }
 
