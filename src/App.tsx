@@ -7,7 +7,7 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/AppSidebar"
 import Location from "./pages/Location"
 import Language from "./pages/Language"
-import NewsPreferences from "./pages/Index"
+import NewsPreferences from "./components/NewsPreferences"
 
 const queryClient = new QueryClient()
 
