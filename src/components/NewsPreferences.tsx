@@ -353,27 +353,21 @@ const NewsPreferences = () => {
                   </div>
                 </div>
               ) : summary ? (
-                <div className="relative w-full">
-                  <Carousel>
-                    <CarouselContent>
-                      {summary.split("\n\n").map((paragraph, index) => (
-                        <CarouselItem key={index}>
-                          <div className="p-6 rounded-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-all animate-in min-h-[200px] flex items-center">
-                            <p className="text-gray-700 leading-relaxed text-lg">
-                              {paragraph}
-                            </p>
-                          </div>
-                        </CarouselItem>
-                      ))}
-                    </CarouselContent>
-                    <div className="absolute -left-12 top-1/2 -translate-y-1/2">
-                      <CarouselPrevious />
-                    </div>
-                    <div className="absolute -right-12 top-1/2 -translate-y-1/2">
-                      <CarouselNext />
-                    </div>
-                  </Carousel>
-                </div>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {summary.split("\n\n").map((paragraph, index) => (
+                      <CarouselItem key={index}>
+                        <div className="p-6 rounded-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-all animate-in min-h-[200px] flex items-center">
+                          <p className="text-gray-700 leading-relaxed text-lg">
+                            {paragraph}
+                          </p>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-0" />
+                  <CarouselNext className="right-0" />
+                </Carousel>
               ) : (
                 <div className="text-center py-12">
                   <Newspaper className="h-12 w-12 text-gray-300 mx-auto mb-4" />
