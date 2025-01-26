@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 import { NearbyEvents } from "./NearbyEvents";
 import { pipeline } from "@huggingface/transformers";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -19,6 +20,16 @@ const categories = [
   "Politics",
   "Sports",
   "Health",
+  "Entertainment",
+  "Science",
+  "Education",
+  "Environment",
+  "Culture",
+  "Travel",
+  "Food",
+  "Fashion",
+  "Automotive",
+  "Real Estate"
 ];
 
 const locations = [
@@ -36,6 +47,8 @@ interface SentimentResult {
 
 export const NewsPreferences = () => {
   const [preferences, setPreferences] = useState<string[]>(["", "", ""]);
+  const [customPreferences, setCustomPreferences] = useState<string[]>([]);
+  const [newCustomPreference, setNewCustomPreference] = useState("");
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
@@ -49,7 +62,6 @@ export const NewsPreferences = () => {
         "Xenova/distilbert-base-uncased-finetuned-sst-2-english"
       );
       const result = await classifier(text);
-      // Handle the array result and ensure type safety
       if (Array.isArray(result) && result.length > 0) {
         const firstResult = result[0] as { label: string; score: number };
         setSentiment({
@@ -73,11 +85,38 @@ export const NewsPreferences = () => {
     setPreferences(newPreferences);
   };
 
+  const addCustomPreference = () => {
+    if (!newCustomPreference.trim()) {
+      toast({
+        title: "Invalid Input",
+        description: "Please enter a custom preference.",
+        variant: "destructive",
+      });
+      return;
+    }
+    if (customPreferences.length >= 2) {
+      toast({
+        title: "Maximum Reached",
+        description: "You can only add up to 2 custom preferences.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setCustomPreferences([...customPreferences, newCustomPreference.trim()]);
+    setNewCustomPreference("");
+  };
+
+  const removeCustomPreference = (index: number) => {
+    setCustomPreferences(customPreferences.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async () => {
-    if (preferences.filter(Boolean).length !== 3 || !location) {
+    const allPreferences = [...preferences.filter(Boolean), ...customPreferences];
+    
+    if (allPreferences.length < 3 || !location) {
       toast({
         title: "Incomplete preferences",
-        description: "Please select 3 categories and a location.",
+        description: "Please select at least 3 preferences (including custom ones) and a location.",
         variant: "destructive",
       });
       return;
@@ -94,7 +133,7 @@ export const NewsPreferences = () => {
         body: JSON.stringify({
           contents: [{
             parts: [{
-              text: `Generate a concise news summary for the following categories: ${preferences.join(", ")} for ${location}. Focus on the most important recent developments.`
+              text: `Generate a concise news summary for the following categories: ${allPreferences.join(", ")} for ${location}. Focus on the most important recent developments.`
             }]
           }]
         }),
@@ -185,6 +224,41 @@ export const NewsPreferences = () => {
                   </Select>
                 </div>
               ))}
+
+              <div className="space-y-4">
+                <label className="text-sm font-medium text-gray-700">
+                  Add Custom Preferences (Optional, max 2):
+                </label>
+                <div className="flex gap-2">
+                  <Input
+                    value={newCustomPreference}
+                    onChange={(e) => setNewCustomPreference(e.target.value)}
+                    placeholder="Enter custom preference"
+                    className="flex-1"
+                  />
+                  <Button
+                    onClick={addCustomPreference}
+                    variant="outline"
+                    size="icon"
+                    className="shrink-0"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                </div>
+                {customPreferences.map((pref, index) => (
+                  <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
+                    <span className="flex-1 text-sm">{pref}</span>
+                    <Button
+                      onClick={() => removeCustomPreference(index)}
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">
