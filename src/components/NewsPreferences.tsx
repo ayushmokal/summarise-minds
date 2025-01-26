@@ -96,7 +96,7 @@ export const NewsPreferences = () => {
         </div>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <Card className="p-6 shadow-lg">
+          <Card className="p-6 shadow-lg bg-white">
             <h2 className="text-2xl font-semibold mb-6">Generate News</h2>
             <div className="space-y-6">
               {[1, 2, 3].map((num, index) => (
@@ -109,12 +109,16 @@ export const NewsPreferences = () => {
                     value={preferences[index]}
                     onValueChange={(value) => handlePreferenceChange(value, index)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full bg-white border-gray-200">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-white border border-gray-200 shadow-lg">
                       {categories.map((category) => (
-                        <SelectItem key={category} value={category.toLowerCase()}>
+                        <SelectItem 
+                          key={category} 
+                          value={category.toLowerCase()}
+                          className="hover:bg-gray-100"
+                        >
                           {category}
                         </SelectItem>
                       ))}
@@ -128,12 +132,16 @@ export const NewsPreferences = () => {
                   Select a Location:
                 </label>
                 <Select value={location} onValueChange={setLocation}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full bg-white border-gray-200">
                     <SelectValue placeholder="Select location" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
                     {locations.map((loc) => (
-                      <SelectItem key={loc.id} value={loc.id}>
+                      <SelectItem 
+                        key={loc.id} 
+                        value={loc.id}
+                        className="hover:bg-gray-100"
+                      >
                         {loc.name}
                       </SelectItem>
                     ))}
@@ -142,7 +150,7 @@ export const NewsPreferences = () => {
               </div>
 
               <Button
-                className="w-full bg-green-500 hover:bg-green-600"
+                className="w-full bg-green-500 hover:bg-green-600 text-white"
                 onClick={handleSubmit}
                 disabled={loading}
               >
@@ -158,7 +166,7 @@ export const NewsPreferences = () => {
             </div>
           </Card>
 
-          <Card className="p-6 shadow-lg">
+          <Card className="p-6 shadow-lg bg-white">
             <h2 className="text-2xl font-semibold mb-6">News Summary</h2>
             <div className="prose prose-sm max-w-none">
               {summary ? (
