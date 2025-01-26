@@ -7,6 +7,13 @@ import { NearbyEvents } from "./NearbyEvents";
 import { pipeline } from "@huggingface/transformers";
 import { Input } from "@/components/ui/input";
 import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -325,7 +332,7 @@ const NewsPreferences = () => {
           <Card className="p-8 shadow-lg bg-white/80 backdrop-blur-sm border-white/20 transition-all hover:shadow-xl">
             <div className="flex items-center gap-3 mb-6">
               <Newspaper className="h-6 w-6 text-green-500" />
-              <h2 className="text-2xl font-semibold">News Summary</h2>
+              <h2 className="text-2xl font-semibold">News Quick Bites</h2>
             </div>
             {sentiment && (
               <div className={`mb-6 p-4 rounded-lg border ${getSentimentColor()}`}>
@@ -346,23 +353,26 @@ const NewsPreferences = () => {
                   </div>
                 </div>
               ) : summary ? (
-                <div className="space-y-6">
-                  {summary.split("\n\n").map((paragraph, index) => (
-                    <div 
-                      key={index} 
-                      className="p-6 rounded-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-all animate-in"
-                    >
-                      <p className="text-gray-700 leading-relaxed">
-                        {paragraph}
-                      </p>
-                    </div>
-                  ))}
-                </div>
+                <Carousel className="w-full">
+                  <CarouselContent>
+                    {summary.split("\n\n").map((paragraph, index) => (
+                      <CarouselItem key={index}>
+                        <div className="p-6 rounded-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-all animate-in min-h-[200px] flex items-center">
+                          <p className="text-gray-700 leading-relaxed text-lg">
+                            {paragraph}
+                          </p>
+                        </div>
+                      </CarouselItem>
+                    ))}
+                  </CarouselContent>
+                  <CarouselPrevious className="left-0" />
+                  <CarouselNext className="right-0" />
+                </Carousel>
               ) : (
                 <div className="text-center py-12">
                   <Newspaper className="h-12 w-12 text-gray-300 mx-auto mb-4" />
                   <p className="text-gray-500 italic">
-                    Select your preferences and generate a summary to see the results here.
+                    Select your preferences and generate a summary to see the quick bites here.
                   </p>
                 </div>
               )}
