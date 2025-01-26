@@ -51,7 +51,7 @@ export const NewsPreferences = () => {
       const result = await classifier(text);
       // Handle the array result and ensure type safety
       if (Array.isArray(result) && result.length > 0) {
-        const firstResult = result[0];
+        const firstResult = result[0] as { label: string; score: number };
         setSentiment({
           label: firstResult.label,
           score: firstResult.score
