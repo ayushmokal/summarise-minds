@@ -62,8 +62,8 @@ export const NewsPreferences = () => {
 
   const handleLocationChange = (locationId: string) => {
     setSelectedLocation(locationId);
-    // Allow empty selection
-    if (!locationId) {
+    // Handle "none" selection
+    if (locationId === "none") {
       setCoordinates(null);
       return;
     }
@@ -221,7 +221,7 @@ export const NewsPreferences = () => {
               <SelectValue placeholder="Select your location (optional)" />
             </SelectTrigger>
             <SelectContent className="bg-white border border-gray-200 shadow-lg">
-              <SelectItem value="">None</SelectItem>
+              <SelectItem value="none">None</SelectItem>
               {locations.map((loc) => (
                 <SelectItem 
                   key={loc.id} 
