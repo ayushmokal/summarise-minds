@@ -101,27 +101,21 @@ export const TrendingTopics = ({ selectedCategories, location }: {
         </Button>
       </div>
       
-      {trendingTopics.length > 0 ? (
-        <div className="space-y-4">
-          {trendingTopics.map((topic, index) => (
-            <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div className="flex items-center gap-3">
-                <Badge variant="secondary" className="capitalize">
-                  {topic.category}
-                </Badge>
-                <span className="font-medium">{topic.topic}</span>
-              </div>
-              <span className="text-sm text-gray-500">
-                {new Date(topic.timestamp).toLocaleTimeString()}
-              </span>
+      <div className="space-y-4">
+        {trendingTopics.map((topic, index) => (
+          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+            <div className="flex items-center gap-3">
+              <Badge variant="secondary" className="capitalize">
+                {topic.category}
+              </Badge>
+              <span className="font-medium">{topic.topic}</span>
             </div>
-          ))}
-        </div>
-      ) : (
-        <p className="text-gray-500 text-center py-4">
-          No trending topics in your selected categories and location
-        </p>
-      )}
+            <span className="text-sm text-gray-500">
+              {new Date(topic.timestamp).toLocaleTimeString()}
+            </span>
+          </div>
+        ))}
+      </div>
     </Card>
   );
 };
