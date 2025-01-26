@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Plus, X } from "lucide-react";
+import { Loader2, Plus, X, MapPin } from "lucide-react";
 import { NearbyEvents } from "./NearbyEvents";
 import { pipeline } from "@huggingface/transformers";
 import { Input } from "@/components/ui/input";
@@ -57,11 +57,14 @@ export const NewsPreferences = () => {
   const [sentiment, setSentiment] = useState<SentimentResult | null>(null);
   const { toast } = useToast();
 
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+
   const handleLocationChange = (locationId: string) => {
-    setLocation(locationId);
+    setSelectedLocation(locationId);
     const selectedLoc = locations.find(loc => loc.id === locationId);
     if (selectedLoc) {
-      setSelectedCoordinates({ lat: selectedLoc.lat, lon: selectedLoc.lon });
+      setCoordinates({ lat: selectedLoc.lat, lon: selectedLoc.lon });
     }
   };
 
@@ -203,6 +206,29 @@ export const NewsPreferences = () => {
           </p>
         </div>
 
+        <Card className="p-6 shadow-lg bg-white mb-8">
+          <div className="flex items-center gap-2 mb-6">
+            <MapPin className="h-5 w-5 text-blue-500" />
+            <h2 className="text-2xl font-semibold">Select Location</h2>
+          </div>
+          <Select value={selectedLocation} onValueChange={handleLocationChange}>
+            <SelectTrigger className="w-full md:w-[300px] bg-white border-gray-200">
+              <SelectValue placeholder="Select your location" />
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-gray-200 shadow-lg">
+              {locations.map((loc) => (
+                <SelectItem 
+                  key={loc.id} 
+                  value={loc.id}
+                  className="hover:bg-gray-100"
+                >
+                  {loc.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </Card>
+
         <div className="grid md:grid-cols-2 gap-8">
           <Card className="p-6 shadow-lg bg-white">
             <h2 className="text-2xl font-semibold mb-6">Generate News</h2>
@@ -236,28 +262,6 @@ export const NewsPreferences = () => {
               ))}
 
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Select a Location:
-                </label>
-                <Select value={location} onValueChange={handleLocationChange}>
-                  <SelectTrigger className="w-full bg-white border-gray-200">
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                    {locations.map((loc) => (
-                      <SelectItem 
-                        key={loc.id} 
-                        value={loc.id}
-                        className="hover:bg-gray-100"
-                      >
-                        {loc.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-4">
                 <label className="text-sm font-medium text-gray-700">
                   Add Custom Preferences (Optional, max 2):
                 </label>
@@ -337,14 +341,14 @@ export const NewsPreferences = () => {
           </Card>
 
           <div className="md:col-span-2">
-            <NearbyEvents coordinates={selectedCoordinates} />
+            <NearbyEvents coordinates={coordinates} />
           </div>
-        </div>
 
-        <TrendingTopics 
-          selectedCategories={[...preferences.filter(Boolean), ...customPreferences]} 
-          location={location}
-        />
+          <TrendingTopics 
+            selectedCategories={[...preferences.filter(Boolean), ...customPreferences]} 
+            location={selectedLocation}
+          />
+        </div>
       </div>
     </div>
   );
