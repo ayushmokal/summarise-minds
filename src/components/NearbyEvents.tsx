@@ -44,6 +44,8 @@ export const NearbyEvents = () => {
   const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
   const [selectedLocation, setSelectedLocation] = useState<string>("");
   const { toast } = useToast();
+  const [retryCount, setRetryCount] = useState(0);
+  const MAX_RETRIES = 3;
 
   const handleLocationSelect = (locationName: string) => {
     setSelectedLocation(locationName);
@@ -66,7 +68,9 @@ export const NearbyEvents = () => {
     }
   };
 
-  const fetchNearbyEvents = async () => {
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+  const fetchNearbyEvents = async (retry = 0) => {
     if (!location) return;
 
     setLoading(true);
@@ -84,25 +88,61 @@ export const NearbyEvents = () => {
               parts: [{
                 text: `Generate 3 upcoming events near ${selectedLocation} for ${currentYear} and beyond. Return ONLY a JSON array with objects containing title, description, location, date (must be in ${currentYear} or later), time, venue, capacity, ticketPrice, organizer, category, and additionalInfo fields. Make the events realistic, detailed, and relevant to the location. Events must be upcoming and not in the past. The response should be ONLY the JSON array, nothing else.`
               }]
-            }]
+            }],
+            generationConfig: {
+              temperature: 0.7,
+              topK: 40,
+              topP: 0.95,
+              maxOutputTokens: 1024,
+            },
+            safetySettings: [
+              {
+                category: "HARM_CATEGORY_HARASSMENT",
+                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+              },
+              {
+                category: "HARM_CATEGORY_HATE_SPEECH",
+                threshold: "BLOCK_MEDIUM_AND_ABOVE"
+              }
+            ]
           }),
         }
       );
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error("API Error:", errorData);
+        
+        if (retry < MAX_RETRIES) {
+          await delay(1000 * (retry + 1)); // Exponential backoff
+          setRetryCount(retry + 1);
+          return fetchNearbyEvents(retry + 1);
+        }
+        
+        throw new Error(`API Error: ${errorData.error?.message || 'Unknown error occurred'}`);
+      }
 
       const data = await response.json();
       if (data.candidates && data.candidates[0].content.parts[0].text) {
         const eventsData = extractJSONFromResponse(data.candidates[0].content.parts[0].text);
         setEvents(eventsData);
+        setRetryCount(0); // Reset retry count on success
+      } else {
+        throw new Error("Invalid response format from API");
       }
     } catch (error) {
       console.error("Error fetching events:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch nearby events. Please try again.",
+        description: retryCount >= MAX_RETRIES 
+          ? "Failed to fetch events after multiple attempts. Please try again later."
+          : "Temporarily unable to fetch events. Retrying...",
         variant: "destructive",
       });
     } finally {
-      setLoading(false);
+      if (retryCount >= MAX_RETRIES) {
+        setLoading(false);
+      }
     }
   };
 
