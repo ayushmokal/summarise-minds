@@ -8,7 +8,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useNavigate } from "react-router-dom"
 
@@ -40,12 +39,11 @@ export function AppSidebar() {
 
   return (
     <>
-      <Sidebar>
+      <Sidebar collapsible="none">
         <SidebarContent>
           <SidebarGroup>
             <div className="flex items-center justify-between px-4 py-2">
               <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-              <SidebarTrigger />
             </div>
             <SidebarGroupContent>
               <SidebarMenu>
