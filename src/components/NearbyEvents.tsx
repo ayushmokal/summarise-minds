@@ -38,17 +38,14 @@ const predefinedLocations = [
   { name: "Paris", lat: 48.8566, lon: 2.3522 }
 ];
 
-export const NearbyEvents = () => {
+export const NearbyEvents = ({ coordinates }: { coordinates: { lat: number; lon: number } | null }) => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(false);
-  const [location, setLocation] = useState<{ lat: number; lon: number } | null>(null);
-  const [selectedLocation, setSelectedLocation] = useState<string>("");
   const { toast } = useToast();
   const [retryCount, setRetryCount] = useState(0);
   const MAX_RETRIES = 3;
 
   const handleLocationSelect = (locationName: string) => {
-    setSelectedLocation(locationName);
     const selected = predefinedLocations.find(loc => loc.name === locationName);
     if (selected) {
       setLocation({ lat: selected.lat, lon: selected.lon });
@@ -71,7 +68,7 @@ export const NearbyEvents = () => {
   const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
   const fetchNearbyEvents = async (retry = 0) => {
-    if (!location) return;
+    if (!coordinates) return;
 
     setLoading(true);
     try {
@@ -86,7 +83,7 @@ export const NearbyEvents = () => {
           body: JSON.stringify({
             contents: [{
               parts: [{
-                text: `Generate 3 upcoming events near ${selectedLocation} for ${currentYear} and beyond. Return ONLY a JSON array with objects containing title, description, location, date (must be in ${currentYear} or later), time, venue, capacity, ticketPrice, organizer, category, and additionalInfo fields. Make the events realistic, detailed, and relevant to the location. Events must be upcoming and not in the past. The response should be ONLY the JSON array, nothing else.`
+                text: `Generate 3 upcoming events near ${coordinates.lat}, ${coordinates.lon} for ${currentYear} and beyond. Return ONLY a JSON array with objects containing title, description, location, date (must be in ${currentYear} or later), time, venue, capacity, ticketPrice, organizer, category, and additionalInfo fields. Make the events realistic, detailed, and relevant to the location. Events must be upcoming and not in the past. The response should be ONLY the JSON array, nothing else.`
               }]
             }],
             generationConfig: {
@@ -147,10 +144,10 @@ export const NearbyEvents = () => {
   };
 
   useEffect(() => {
-    if (location) {
+    if (coordinates) {
       fetchNearbyEvents();
     }
-  }, [location]);
+  }, [coordinates]);
 
   return (
     <Card className="p-6 shadow-lg bg-white">
@@ -158,7 +155,7 @@ export const NearbyEvents = () => {
         <h2 className="text-2xl font-semibold">Events Near You</h2>
         <Button
           onClick={() => fetchNearbyEvents()}
-          disabled={loading || !location}
+          disabled={loading || !coordinates}
           className="bg-blue-500 hover:bg-blue-600 text-white"
         >
           {loading ? (
@@ -191,7 +188,7 @@ export const NearbyEvents = () => {
         </Select>
       </div>
 
-      {location && (
+      {coordinates && (
         <div className="flex items-center gap-2 mb-4 text-sm text-gray-600">
           <MapPin className="h-4 w-4" />
           <span>Selected Location: {selectedLocation}</span>

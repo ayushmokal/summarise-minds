@@ -34,11 +34,11 @@ const categories = [
 ];
 
 const locations = [
-  { id: "us", name: "USA" },
-  { id: "uk", name: "UK" },
-  { id: "ca", name: "Canada" },
-  { id: "au", name: "Australia" },
-  { id: "in", name: "India" },
+  { id: "us", name: "USA", lat: 37.0902, lon: -95.7129 },
+  { id: "uk", name: "UK", lat: 55.3781, lon: -3.4360 },
+  { id: "ca", name: "Canada", lat: 56.1304, lon: -106.3468 },
+  { id: "au", name: "Australia", lat: -25.2744, lon: 133.7751 },
+  { id: "in", name: "India", lat: 20.5937, lon: 78.9629 },
 ];
 
 interface SentimentResult {
@@ -51,10 +51,19 @@ export const NewsPreferences = () => {
   const [customPreferences, setCustomPreferences] = useState<string[]>([]);
   const [newCustomPreference, setNewCustomPreference] = useState("");
   const [location, setLocation] = useState("");
+  const [selectedCoordinates, setSelectedCoordinates] = useState<{ lat: number; lon: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
   const [sentiment, setSentiment] = useState<SentimentResult | null>(null);
   const { toast } = useToast();
+
+  const handleLocationChange = (locationId: string) => {
+    setLocation(locationId);
+    const selectedLoc = locations.find(loc => loc.id === locationId);
+    if (selectedLoc) {
+      setSelectedCoordinates({ lat: selectedLoc.lat, lon: selectedLoc.lon });
+    }
+  };
 
   const analyzeSentiment = async (text: string) => {
     try {
@@ -226,6 +235,28 @@ export const NewsPreferences = () => {
                 </div>
               ))}
 
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-gray-700">
+                  Select a Location:
+                </label>
+                <Select value={location} onValueChange={handleLocationChange}>
+                  <SelectTrigger className="w-full bg-white border-gray-200">
+                    <SelectValue placeholder="Select location" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                    {locations.map((loc) => (
+                      <SelectItem 
+                        key={loc.id} 
+                        value={loc.id}
+                        className="hover:bg-gray-100"
+                      >
+                        {loc.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-4">
                 <label className="text-sm font-medium text-gray-700">
                   Add Custom Preferences (Optional, max 2):
@@ -259,28 +290,6 @@ export const NewsPreferences = () => {
                     </Button>
                   </div>
                 ))}
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">
-                  Select a Location:
-                </label>
-                <Select value={location} onValueChange={setLocation}>
-                  <SelectTrigger className="w-full bg-white border-gray-200">
-                    <SelectValue placeholder="Select location" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white border border-gray-200 shadow-lg">
-                    {locations.map((loc) => (
-                      <SelectItem 
-                        key={loc.id} 
-                        value={loc.id}
-                        className="hover:bg-gray-100"
-                      >
-                        {loc.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
 
               <Button
@@ -328,7 +337,7 @@ export const NewsPreferences = () => {
           </Card>
 
           <div className="md:col-span-2">
-            <NearbyEvents />
+            <NearbyEvents coordinates={selectedCoordinates} />
           </div>
         </div>
 
