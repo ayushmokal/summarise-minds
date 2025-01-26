@@ -49,19 +49,29 @@ const NewsPreferences = () => {
   const [preferences, setPreferences] = useState<string[]>(["", "", ""]);
   const [customPreferences, setCustomPreferences] = useState<string[]>([]);
   const [newCustomPreference, setNewCustomPreference] = useState("");
-  const [location, setLocation] = useState("");
-  const [selectedCoordinates, setSelectedCoordinates] = useState<{ lat: number; lon: number } | null>(null);
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
   const [sentiment, setSentiment] = useState<SentimentResult | null>(null);
   const { toast } = useToast();
 
-  const [selectedLocation, setSelectedLocation] = useState("");
-  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(null);
+  // Get the location from localStorage that was set in the Location page
+  const [selectedLocation, setSelectedLocation] = useState(() => {
+    const savedLocation = localStorage.getItem('selectedLocation');
+    const locationName = locations.find(loc => loc.id === savedLocation)?.name;
+    return savedLocation || "";
+  });
+  const [coordinates, setCoordinates] = useState<{ lat: number; lon: number } | null>(() => {
+    const savedLocation = localStorage.getItem('selectedLocation');
+    return locations.find(loc => loc.id === savedLocation) 
+      ? { 
+          lat: locations.find(loc => loc.id === savedLocation)!.lat, 
+          lon: locations.find(loc => loc.id === savedLocation)!.lon 
+        }
+      : null;
+  });
 
   const handleLocationChange = (locationId: string) => {
     setSelectedLocation(locationId);
-    // Handle "none" selection
     if (locationId === "none") {
       setCoordinates(null);
       return;
@@ -215,25 +225,14 @@ const NewsPreferences = () => {
         <Card className="p-8 shadow-lg bg-white/80 backdrop-blur-sm border-white/20 mb-8 transition-all hover:shadow-xl">
           <div className="flex items-center gap-3 mb-6">
             <Globe2 className="h-6 w-6 text-blue-500" />
-            <h2 className="text-2xl font-semibold">Select Location</h2>
+            <h2 className="text-2xl font-semibold">Location</h2>
           </div>
-          <Select value={selectedLocation} onValueChange={handleLocationChange}>
-            <SelectTrigger className="w-full md:w-[300px] bg-white border-gray-200 hover:border-blue-300 transition-colors">
-              <SelectValue placeholder="Select your location (optional)" />
-            </SelectTrigger>
-            <SelectContent className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
-              <SelectItem value="none">None</SelectItem>
-              {locations.map((loc) => (
-                <SelectItem 
-                  key={loc.id} 
-                  value={loc.id}
-                  className="hover:bg-blue-50 transition-colors"
-                >
-                  {loc.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <MapPin className="h-5 w-5 text-blue-500" />
+            <span className="text-lg text-gray-700">
+              {locations.find(loc => loc.id === selectedLocation)?.name || "No location selected"}
+            </span>
+          </div>
         </Card>
 
         <div className="grid md:grid-cols-2 gap-8">
