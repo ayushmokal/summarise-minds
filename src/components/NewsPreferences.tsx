@@ -130,6 +130,15 @@ export const NewsPreferences = () => {
   const handleSubmit = async () => {
     const allPreferences = [...preferences.filter(Boolean), ...customPreferences];
     
+    if (allPreferences.length !== 3) {
+      toast({
+        title: "Incomplete preferences",
+        description: "Please select exactly 3 preferences (including custom ones).",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setLoading(true);
     setSentiment(null);
     try {
