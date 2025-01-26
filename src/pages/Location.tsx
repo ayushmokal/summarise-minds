@@ -1,5 +1,4 @@
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { MapPin } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 import {
@@ -22,38 +21,39 @@ const Location = () => {
   const navigate = useNavigate();
 
   const handleLocationSelect = (locationId: string) => {
-    // Store location in localStorage
     localStorage.setItem('selectedLocation', locationId);
     navigate('/language');
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 p-8">
-      <div className="max-w-2xl mx-auto">
-        <Card className="p-8 shadow-lg bg-white/80 backdrop-blur-sm">
-          <div className="flex items-center gap-3 mb-6">
-            <MapPin className="h-6 w-6 text-blue-500" />
-            <h1 className="text-2xl font-semibold">Select Your Location</h1>
-          </div>
-          
-          <Select onValueChange={handleLocationSelect}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Choose your location" />
-            </SelectTrigger>
-            <SelectContent>
-              {locations.map((location) => (
-                <SelectItem key={location.id} value={location.id}>
-                  {location.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+    <div className="min-h-screen bg-transparent p-8 flex items-center justify-center">
+      <Card className="w-full max-w-md p-8 bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
+        <div className="flex items-center gap-3 mb-6">
+          <MapPin className="h-6 w-6 text-blue-500" />
+          <h1 className="text-2xl font-semibold">Select Your Location</h1>
+        </div>
+        
+        <Select onValueChange={handleLocationSelect}>
+          <SelectTrigger className="w-full bg-white border-gray-200 hover:border-blue-300 transition-colors">
+            <SelectValue placeholder="Choose your location" />
+          </SelectTrigger>
+          <SelectContent className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
+            {locations.map((location) => (
+              <SelectItem 
+                key={location.id} 
+                value={location.id}
+                className="hover:bg-blue-50 transition-colors"
+              >
+                {location.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
-          <p className="mt-4 text-sm text-gray-600">
-            Your location helps us provide relevant news and updates.
-          </p>
-        </Card>
-      </div>
+        <p className="mt-4 text-sm text-gray-600">
+          Your location helps us provide relevant news and updates.
+        </p>
+      </Card>
     </div>
   )
 }
