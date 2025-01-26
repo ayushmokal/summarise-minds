@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Plus, X, MapPin } from "lucide-react";
+import { Loader2, Plus, X, MapPin, Newspaper, Settings2, Globe2 } from "lucide-react";
 import { NearbyEvents } from "./NearbyEvents";
 import { pipeline } from "@huggingface/transformers";
 import { Input } from "@/components/ui/input";
@@ -201,31 +201,33 @@ export const NewsPreferences = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold font-['Martian_Mono'] mb-4">News Insight AI</h1>
-          <p className="text-lg text-gray-600 font-['Inclusive_Sans']">
+        <div className="text-center mb-12 space-y-4">
+          <h1 className="text-5xl font-bold font-['Martian_Mono'] bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 mb-4">
+            News Insight AI
+          </h1>
+          <p className="text-xl text-gray-600 font-['Inclusive_Sans'] max-w-2xl mx-auto">
             An Intelligent Framework for Personalized Cross-Domain News Summarization
           </p>
         </div>
 
-        <Card className="p-6 shadow-lg bg-white mb-8">
-          <div className="flex items-center gap-2 mb-6">
-            <MapPin className="h-5 w-5 text-blue-500" />
+        <Card className="p-8 shadow-lg bg-white/80 backdrop-blur-sm border-white/20 mb-8 transition-all hover:shadow-xl">
+          <div className="flex items-center gap-3 mb-6">
+            <Globe2 className="h-6 w-6 text-blue-500" />
             <h2 className="text-2xl font-semibold">Select Location</h2>
           </div>
           <Select value={selectedLocation} onValueChange={handleLocationChange}>
-            <SelectTrigger className="w-full md:w-[300px] bg-white border-gray-200">
+            <SelectTrigger className="w-full md:w-[300px] bg-white border-gray-200 hover:border-blue-300 transition-colors">
               <SelectValue placeholder="Select your location (optional)" />
             </SelectTrigger>
-            <SelectContent className="bg-white border border-gray-200 shadow-lg">
+            <SelectContent className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
               <SelectItem value="none">None</SelectItem>
               {locations.map((loc) => (
                 <SelectItem 
                   key={loc.id} 
                   value={loc.id}
-                  className="hover:bg-gray-100"
+                  className="hover:bg-blue-50 transition-colors"
                 >
                   {loc.name}
                 </SelectItem>
@@ -235,8 +237,11 @@ export const NewsPreferences = () => {
         </Card>
 
         <div className="grid md:grid-cols-2 gap-8">
-          <Card className="p-6 shadow-lg bg-white">
-            <h2 className="text-2xl font-semibold mb-6">Generate News</h2>
+          <Card className="p-8 shadow-lg bg-white/80 backdrop-blur-sm border-white/20 transition-all hover:shadow-xl">
+            <div className="flex items-center gap-3 mb-6">
+              <Settings2 className="h-6 w-6 text-purple-500" />
+              <h2 className="text-2xl font-semibold">Generate News</h2>
+            </div>
             <div className="space-y-6">
               {[1, 2, 3].map((num, index) => (
                 <div key={num} className="space-y-2">
@@ -248,15 +253,15 @@ export const NewsPreferences = () => {
                     value={preferences[index]}
                     onValueChange={(value) => handlePreferenceChange(value, index)}
                   >
-                    <SelectTrigger className="w-full bg-white border-gray-200">
+                    <SelectTrigger className="w-full bg-white border-gray-200 hover:border-purple-300 transition-colors">
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white border border-gray-200 shadow-lg">
+                    <SelectContent className="bg-white/80 backdrop-blur-sm border-white/20 shadow-lg">
                       {categories.map((category) => (
                         <SelectItem 
                           key={category} 
                           value={category.toLowerCase()}
-                          className="hover:bg-gray-100"
+                          className="hover:bg-purple-50 transition-colors"
                         >
                           {category}
                         </SelectItem>
@@ -266,7 +271,7 @@ export const NewsPreferences = () => {
                 </div>
               ))}
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <label className="text-sm font-medium text-gray-700">
                   Add Custom Preferences (Optional, max 2):
                 </label>
@@ -275,25 +280,25 @@ export const NewsPreferences = () => {
                     value={newCustomPreference}
                     onChange={(e) => setNewCustomPreference(e.target.value)}
                     placeholder="Enter custom preference"
-                    className="flex-1"
+                    className="flex-1 border-gray-200 hover:border-purple-300 transition-colors"
                   />
                   <Button
                     onClick={addCustomPreference}
                     variant="outline"
                     size="icon"
-                    className="shrink-0"
+                    className="shrink-0 hover:bg-purple-50 hover:text-purple-600 transition-colors"
                   >
                     <Plus className="h-4 w-4" />
                   </Button>
                 </div>
                 {customPreferences.map((pref, index) => (
-                  <div key={index} className="flex items-center gap-2 bg-gray-50 p-2 rounded">
-                    <span className="flex-1 text-sm">{pref}</span>
+                  <div key={index} className="flex items-center gap-2 bg-purple-50 p-3 rounded-lg animate-in">
+                    <span className="flex-1 text-sm text-purple-700">{pref}</span>
                     <Button
                       onClick={() => removeCustomPreference(index)}
                       variant="ghost"
                       size="icon"
-                      className="h-6 w-6"
+                      className="h-6 w-6 hover:bg-purple-100 hover:text-purple-700"
                     >
                       <X className="h-4 w-4" />
                     </Button>
@@ -302,7 +307,7 @@ export const NewsPreferences = () => {
               </div>
 
               <Button
-                className="w-full bg-green-500 hover:bg-green-600 text-white"
+                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg transition-all hover:shadow-xl"
                 onClick={handleSubmit}
                 disabled={loading}
               >
@@ -318,10 +323,13 @@ export const NewsPreferences = () => {
             </div>
           </Card>
 
-          <Card className="p-6 shadow-lg bg-white">
-            <h2 className="text-2xl font-semibold mb-6">News Summary</h2>
+          <Card className="p-8 shadow-lg bg-white/80 backdrop-blur-sm border-white/20 transition-all hover:shadow-xl">
+            <div className="flex items-center gap-3 mb-6">
+              <Newspaper className="h-6 w-6 text-green-500" />
+              <h2 className="text-2xl font-semibold">News Summary</h2>
+            </div>
             {sentiment && (
-              <div className={`mb-4 p-3 rounded-lg border ${getSentimentColor()}`}>
+              <div className={`mb-6 p-4 rounded-lg border ${getSentimentColor()}`}>
                 <p className="flex items-center gap-2 text-sm font-medium">
                   Sentiment: {sentiment.label} {getSentimentEmoji()}
                   <span className="text-xs text-gray-500">
@@ -332,16 +340,18 @@ export const NewsPreferences = () => {
             )}
             <div className="prose prose-sm max-w-none">
               {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
-                  <span className="ml-3 text-gray-600">Generating summary...</span>
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center space-y-4">
+                    <Loader2 className="h-12 w-12 animate-spin text-blue-500 mx-auto" />
+                    <span className="block text-gray-600">Generating your personalized summary...</span>
+                  </div>
                 </div>
               ) : summary ? (
-                <div className="space-y-4">
+                <div className="space-y-6">
                   {summary.split("\n\n").map((paragraph, index) => (
                     <div 
                       key={index} 
-                      className="p-4 rounded-lg bg-gray-50 border border-gray-100 animate-in"
+                      className="p-6 rounded-xl bg-gradient-to-br from-white to-gray-50 border border-gray-100 shadow-sm hover:shadow-md transition-all animate-in"
                     >
                       <p className="text-gray-700 leading-relaxed">
                         {paragraph}
@@ -350,9 +360,12 @@ export const NewsPreferences = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500 italic text-center py-8">
-                  Select your preferences and generate a summary to see the results here.
-                </p>
+                <div className="text-center py-12">
+                  <Newspaper className="h-12 w-12 text-gray-300 mx-auto mb-4" />
+                  <p className="text-gray-500 italic">
+                    Select your preferences and generate a summary to see the results here.
+                  </p>
+                </div>
               )}
             </div>
           </Card>
