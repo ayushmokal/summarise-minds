@@ -45,7 +45,7 @@ interface SentimentResult {
   score: number;
 }
 
-export const NewsPreferences = () => {
+const NewsPreferences = () => {
   const [preferences, setPreferences] = useState<string[]>(["", "", ""]);
   const [customPreferences, setCustomPreferences] = useState<string[]>([]);
   const [newCustomPreference, setNewCustomPreference] = useState("");
@@ -378,3 +378,5 @@ export const NewsPreferences = () => {
     </div>
   );
 };
+
+export default NewsPreferences;
