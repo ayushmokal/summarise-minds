@@ -29,12 +29,17 @@ const locations = [
   { id: "in", name: "India" },
 ];
 
+interface SentimentResult {
+  label: string;
+  score: number;
+}
+
 export const NewsPreferences = () => {
   const [preferences, setPreferences] = useState<string[]>(["", "", ""]);
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
-  const [sentiment, setSentiment] = useState<{ label: string; score: number } | null>(null);
+  const [sentiment, setSentiment] = useState<SentimentResult | null>(null);
   const { toast } = useToast();
 
   const analyzeSentiment = async (text: string) => {
@@ -44,7 +49,14 @@ export const NewsPreferences = () => {
         "Xenova/distilbert-base-uncased-finetuned-sst-2-english"
       );
       const result = await classifier(text);
-      setSentiment(result[0]);
+      // Handle the array result and ensure type safety
+      if (Array.isArray(result) && result.length > 0) {
+        const firstResult = result[0];
+        setSentiment({
+          label: firstResult.label,
+          score: firstResult.score
+        });
+      }
     } catch (error) {
       console.error("Sentiment analysis error:", error);
       toast({
