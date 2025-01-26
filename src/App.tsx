@@ -17,10 +17,10 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
-        <SidebarProvider>
+        <SidebarProvider defaultOpen={true}>
           <div className="flex min-h-screen w-full">
             <AppSidebar />
-            <main className="flex-1">
+            <main className="flex-1 relative">
               <Routes>
                 <Route path="/" element={<Navigate to="/location" replace />} />
                 <Route path="/location" element={<Location />} />
