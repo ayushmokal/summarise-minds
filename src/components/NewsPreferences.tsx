@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
 import { NearbyEvents } from "./NearbyEvents";
+import { pipeline } from "@huggingface/transformers";
 import {
   Select,
   SelectContent,
@@ -33,7 +34,26 @@ export const NewsPreferences = () => {
   const [location, setLocation] = useState("");
   const [loading, setLoading] = useState(false);
   const [summary, setSummary] = useState("");
+  const [sentiment, setSentiment] = useState<{ label: string; score: number } | null>(null);
   const { toast } = useToast();
+
+  const analyzeSentiment = async (text: string) => {
+    try {
+      const classifier = await pipeline(
+        "sentiment-analysis",
+        "Xenova/distilbert-base-uncased-finetuned-sst-2-english"
+      );
+      const result = await classifier(text);
+      setSentiment(result[0]);
+    } catch (error) {
+      console.error("Sentiment analysis error:", error);
+      toast({
+        title: "Sentiment Analysis Error",
+        description: "Failed to analyze sentiment. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const handlePreferenceChange = (value: string, index: number) => {
     const newPreferences = [...preferences];
@@ -52,6 +72,7 @@ export const NewsPreferences = () => {
     }
 
     setLoading(true);
+    setSentiment(null);
     try {
       const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyClIsIwka4gzTqUttDwb1R2egOsJboKqKs", {
         method: "POST",
@@ -69,7 +90,9 @@ export const NewsPreferences = () => {
 
       const data = await response.json();
       if (data.candidates && data.candidates[0].content.parts[0].text) {
-        setSummary(data.candidates[0].content.parts[0].text);
+        const summaryText = data.candidates[0].content.parts[0].text;
+        setSummary(summaryText);
+        await analyzeSentiment(summaryText);
       } else {
         throw new Error("Failed to generate summary");
       }
@@ -82,6 +105,30 @@ export const NewsPreferences = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getSentimentColor = () => {
+    if (!sentiment) return "bg-gray-100";
+    switch (sentiment.label.toLowerCase()) {
+      case "positive":
+        return "bg-green-100 border-green-200";
+      case "negative":
+        return "bg-red-100 border-red-200";
+      default:
+        return "bg-gray-100 border-gray-200";
+    }
+  };
+
+  const getSentimentEmoji = () => {
+    if (!sentiment) return "";
+    switch (sentiment.label.toLowerCase()) {
+      case "positive":
+        return "😊";
+      case "negative":
+        return "😔";
+      default:
+        return "😐";
     }
   };
 
@@ -168,6 +215,16 @@ export const NewsPreferences = () => {
 
           <Card className="p-6 shadow-lg bg-white">
             <h2 className="text-2xl font-semibold mb-6">News Summary</h2>
+            {sentiment && (
+              <div className={`mb-4 p-3 rounded-lg border ${getSentimentColor()}`}>
+                <p className="flex items-center gap-2 text-sm font-medium">
+                  Sentiment: {sentiment.label} {getSentimentEmoji()}
+                  <span className="text-xs text-gray-500">
+                    (Confidence: {Math.round(sentiment.score * 100)}%)
+                  </span>
+                </p>
+              </div>
+            )}
             <div className="prose prose-sm max-w-none">
               {summary ? (
                 summary.split("\n\n").map((paragraph, index) => (
