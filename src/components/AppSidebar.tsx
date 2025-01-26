@@ -1,4 +1,4 @@
-import { Globe2, Languages } from "lucide-react"
+import { Globe2, Languages, Home } from "lucide-react"
 import {
   Sidebar,
   SidebarContent,
@@ -8,10 +8,16 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
 } from "@/components/ui/sidebar"
 import { useNavigate } from "react-router-dom"
 
 const items = [
+  {
+    title: "Home",
+    url: "/location",
+    icon: Home,
+  },
   {
     title: "Location",
     url: "/location",
@@ -33,26 +39,31 @@ export function AppSidebar() {
   const navigate = useNavigate();
 
   return (
-    <Sidebar>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    onClick={() => navigate(item.url)}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.title}</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-    </Sidebar>
+    <>
+      <Sidebar>
+        <SidebarContent>
+          <SidebarGroup>
+            <div className="flex items-center justify-between px-4 py-2">
+              <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+              <SidebarTrigger />
+            </div>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                {items.map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      onClick={() => navigate(item.url)}
+                    >
+                      <item.icon className="h-4 w-4" />
+                      <span>{item.title}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ))}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        </SidebarContent>
+      </Sidebar>
+    </>
   )
 }
